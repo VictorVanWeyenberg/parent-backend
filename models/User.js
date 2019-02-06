@@ -1,6 +1,6 @@
 let mongoose = require('mongoose');
 let crypto = require("crypto");
-let jwt = require("express-jwt");
+let jwt = require("jsonwebtoken");
 
 let UserSchema = new mongoose.Schema({
     email : { type: String, lowercase: true, unique: true },
@@ -9,17 +9,18 @@ let UserSchema = new mongoose.Schema({
     registrationDate : { type: Date, default: new Date() }
 });
 
-UserSchema.methods.setPassword = (password) => {
+UserSchema.methods.setPassword = function(password) {
+    console.log(password);
     this.salt = crypto.randomBytes(32).toString('hex');
     this.hash = crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha512').toString('hex');
 }
 
-UserSchema.methods.validPassword = (password) => {
+UserSchema.methods.validPassword = function(password) {
     let hash = crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha512').toString('hex');
     return this.hash == hash;
 }
 
-UserSchema.methods.generateJWT = () => {
+UserSchema.methods.generateJWT = function() {
     var today = new Date();
     var exp = new Date(today);
     exp.setDate(today.getDate() + 60);
