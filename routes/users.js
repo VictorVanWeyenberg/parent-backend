@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 let mongoose = require('mongoose');
 let User = mongoose.model('User');
+let Ouder = mongoose.model('Ouder');
 let passport = require('passport');
 
 router.post('/register', (req, res, next) => {
@@ -9,11 +10,20 @@ router.post('/register', (req, res, next) => {
     return res.status(400).json({ message: 'Sommige velden zijn leeg...' });
   }
   let user = new User();
+  let ouder = new Ouder();
+  user.ouder = ouder;
+  user.ouder.email = req.body.email;
   user.email = req.body.email;
   user.setPassword(req.body.password);
-  user.save(err => {
+  ouder.save(err => {
     if (err) return next(err);
-    return res.json({ token: user.generateJWT() });
+    user.save(err2 => {
+      if (err2) {
+        Ouder.findOneAndRemove(ouder);
+        return next(err2);
+      }
+      return res.json({ token: user.generateJWT() });
+    });
   });
 });
 

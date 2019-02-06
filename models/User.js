@@ -1,8 +1,11 @@
 let mongoose = require('mongoose');
 let crypto = require("crypto");
 let jwt = require("jsonwebtoken");
+require('./Ouder');
+let OuderSchema = mongoose.model('Ouder').schema;
 
 let UserSchema = new mongoose.Schema({
+    ouder : { type : OuderSchema, required : true },
     email : { type: String, lowercase: true, unique: true },
     hash : String,
     salt : String,
@@ -10,7 +13,6 @@ let UserSchema = new mongoose.Schema({
 });
 
 UserSchema.methods.setPassword = function(password) {
-    console.log(password);
     this.salt = crypto.randomBytes(32).toString('hex');
     this.hash = crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha512').toString('hex');
 }
