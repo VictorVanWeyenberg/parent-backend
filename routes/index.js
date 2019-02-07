@@ -14,9 +14,22 @@ router.param('ouder', function (req, res, next, id) {
       req.ouder = ouder;
       return next();
     } else {
-      res.status(401).json({ message: "Kon ouder niet vinden." });
+      return res.status(401).json({ message: "Kon ouder niet vinden." });
     }
   });
+});
+
+router.param('ouder_populated', function (req, res, next, id) {
+  Ouder.findOne({ _id: id }).populate("lists.kinderen").exec(function(err, ouder) {
+    if (err) return next(err);
+    if (ouder) {
+      console.log(ouder);
+      req.ouder = ouder;
+      return next();
+    } else {
+      return res.status(401).json({ message: "Kon ouder niet vinden." });
+    }
+  })
 });
 
 router.param('kind', function (req, res, next, id) {
@@ -32,7 +45,7 @@ router.param('kind', function (req, res, next, id) {
 });
 
 router.get('/ouders', function(req, res, next) {
-  Ouder.find({}).exec((err, ouders) => {
+  Ouder.find({}).populate('lists.kinderen').exec((err, ouders) => {
     if (err) return next(err);
     return res.json(ouders);
   });
@@ -41,7 +54,6 @@ router.get('/ouders', function(req, res, next) {
 router.post('/ouders', function(req, res, next) {
   let ouder = new Ouder(req.body);
   ouder.save(err => {
-    console.log(err);
     if (err) return next(err);
     return res.json(ouder);
   });
@@ -64,7 +76,6 @@ router.post('/ouder/:ouder/kind/voegtoe', function(req, res, next) {
 });
 
 router.post('/ouder/:ouder/update', function(req, res, next) {
-  console.log("bird has landed");
   let ouder = req.ouder;
   let update = req.body;
   update.updateDatum = new Date();
@@ -96,5 +107,15 @@ router.delete('/ouder/:ouder/delete/:kind', function(req, res, next) {
     });
   });
 });
+
+router.get('/ouder/:ouder', function(req, res) {
+  res.json(req.ouder);
+});
+
+router.get('/ouder/:ouder_populated/kinderen', function(req, res) {
+  res.json(req.ouder.kinderen);
+});
+
+
 
 module.exports = router;
