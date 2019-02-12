@@ -10,6 +10,7 @@ mongoose.connect("mongodb://localhost:27017/parent");
 require('./models/Kind');
 require('./models/Ouder');
 require('./models/User');
+require('./models/PasswordResetRequest');
 
 require('./config/passport');
 var indexRouter = require('./routes/index');

@@ -75,23 +75,23 @@ router.post('/ouder/:ouder/kind/voegtoe', function(req, res, next) {
   });
 });
 
-router.post('/ouder/:ouder/update', function(req, res, next) {
-  let ouder = req.ouder;
+router.post('/ouder/update', function(req, res, next) {
+  let ouderID = req.body._id;
   let update = req.body;
   update.updateDatum = new Date();
-  Ouder.update(ouder, update, (err) => {
+  Ouder.update({ _id: ouderID }, update, (err) => {
     if (err) return next(err);
     res.json(ouder);
   });
 });
 
-router.post('/kind/:kind/update', function(req, res, next) {
-  let kind = req.kind;
+router.post('/kind/update', function(req, res, next) {
+  let kindID = req.body._id;
   let update = req.body;
   update.updateDatum = new Date();
-  Kind.update(kind, update, (err) => {
+  Kind.update({ _id: kindID }, update, (err) => {
     if (err) return next(err);
-    res.json(kind);
+    res.json(update);
   });
 });
 
