@@ -10,6 +10,7 @@ let KindSchema = new mongoose.Schema({
     onPhoto : { type : Boolean, required : true },
     notities : { type : String, required : true },
     actief : { type : Boolean, required : true },
+    imageUrl : { type : String, required : false, default : "default.jpg" },
     registratiedatum : { type : Date, default : new Date() },
     updateDatum : { type : Date, default : new Date() }
 });
