@@ -90,6 +90,16 @@ router.post('/reset/:reset_id/:code', (req, res, next) => {
   }
 });
 
+router.post('/checkemail', (req, res, next) => {
+  User.find({email: req.body.email}, (err, result) => {
+    if (result.length) {
+      res.json({ 'available': false });
+    } else {
+      res.json({ 'available': true });
+    }
+  });
+});
+
 function makeCode() {
   var text = "";
   var possible = "abcdefghijklmnopqrstuvwxyz";
